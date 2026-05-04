@@ -329,11 +329,15 @@
 
     .exposure-factors {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 0.75rem;
     }
 
-    @media (max-width: 550px) {
+    @media (max-width: 700px) {
+      .exposure-factors { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 480px) {
       .exposure-factors { grid-template-columns: 1fr; }
     }
 
@@ -533,7 +537,7 @@
     <!-- Narrative -->
     <div class="narrative-box">
       <h3>Your Position in the Curve</h3>
-      <p id="narrative">Moderate-income earners sit in the most exposed position. Too "wealthy" to receive meaningful government support, but carrying enough debt — or paying enough rent — to feel every OCR move. When rates rise, your mortgage or rent costs climb. When rates fall, housing prices inflate, raising your long-term housing costs.</p>
+      <p id="narrative">Moderate-income earners are the most exposed. You face a double squeeze: OCR hikes increase your mortgage or rental costs directly, while OCR cuts inflate house prices and the imputed cost of your housing. Add to that market concentration and privatised essential services — power, internet, insurance — where reduced competition means price falls don't flow through to you the way economic models suggest. Too "wealthy" for meaningful support, too constrained by debt and essential costs to hedge. You lose both ways.</p>
     </div>
 
     <div class="context-footer">
@@ -573,71 +577,78 @@
       const income = b.midIncome;
 
       // Base exposure factors (empirically calibrated to thesis)
-      let debtSensitivity, imputedRentImpact, supportLevel, investmentFlex, essentialSpending;
+      let debtSensitivity, imputedRentImpact, supportLevel, investmentFlex, essentialSpending, marketConcentration;
 
       switch (bandKey) {
         case 'very-low':
           // Protected by benefits, limited debt, no investment flexibility
-          debtSensitivity    = 0.15;  // 0.15% of income per 1% rate rise
-          imputedRentImpact  = 0.1;   // low — housing is often social/beneficiary
-          supportLevel       = 0.9;   // strong safety net
-          investmentFlex     = 0.0;   // no investments to reposition
-          essentialSpending  = 0.85;  // 85% of income on essentials (but subsidised)
+          debtSensitivity       = 0.15;
+          imputedRentImpact     = 0.1;
+          supportLevel          = 0.9;
+          investmentFlex        = 0.0;
+          essentialSpending     = 0.85;
+          marketConcentration   = 0.4;  // dependent on essential services but some subsidised
           break;
 
         case 'low':
           // Some protection, some debt, starting to lose support
-          debtSensitivity    = 0.35;
-          imputedRentImpact  = 0.4;
-          supportLevel       = 0.5;   // phasing out
-          investmentFlex     = 0.1;
-          essentialSpending  = 0.70;
+          debtSensitivity       = 0.35;
+          imputedRentImpact     = 0.4;
+          supportLevel          = 0.5;
+          investmentFlex        = 0.1;
+          essentialSpending     = 0.70;
+          marketConcentration   = 0.6;  // heavily affected by privatised essential price inflation
           break;
 
         case 'moderate':
-          // Most exposed — little support, significant debt, high essentials
-          debtSensitivity    = 0.9;   // heavy mortgage/debt burden
-          imputedRentImpact  = 1.1;   // high imputed rent (rent or mortgage)
-          supportLevel       = 0.1;   // means-tested support mostly gone
-          investmentFlex     = 0.2;   // some savings but limited flexibility
-          essentialSpending  = 0.55;  // still high (rent, food, transport)
+          // Most exposed — little support, significant debt, high essentials, locked into oligopolistic services
+          debtSensitivity       = 0.9;
+          imputedRentImpact     = 1.1;
+          supportLevel          = 0.1;
+          investmentFlex        = 0.2;
+          essentialSpending     = 0.55;
+          marketConcentration   = 0.9;  // HIGHEST — can't avoid power/internet/insurance costs, no flexibility
           break;
 
         case 'high':
           // Lower relative exposure — lower essentials %, investment flexibility
-          debtSensitivity    = 0.4;
-          imputedRentImpact  = 0.5;
-          supportLevel       = 0.0;
-          investmentFlex     = 0.7;   // can shift investments
-          essentialSpending  = 0.35;
+          debtSensitivity       = 0.4;
+          imputedRentImpact     = 0.5;
+          supportLevel          = 0.0;
+          investmentFlex        = 0.7;
+          essentialSpending     = 0.35;
+          marketConcentration   = 0.4;  // can select, switch, negotiate
           break;
 
         case 'very-high':
           // Minimal exposure — low essentials %, high flexibility
-          debtSensitivity    = 0.15;
-          imputedRentImpact  = 0.2;
-          supportLevel       = 0.0;
-          investmentFlex     = 1.0;   // can profit from either direction
-          essentialSpending  = 0.15;
+          debtSensitivity       = 0.15;
+          imputedRentImpact     = 0.2;
+          supportLevel          = 0.0;
+          investmentFlex        = 1.0;
+          essentialSpending     = 0.15;
+          marketConcentration   = 0.1;  // can avoid, self-provide, negotiate
           break;
       }
 
       // Calculate effective "tax" rates for 1% OCR change
-      // Rate hike: costs via debt servicing, reduced support (for low band), income effect
-      // Rate cut: costs via imputed rent / housing price inflation
+      // Rate hike: costs via debt servicing, reduced support (for low band), income effect, market concentration
+      // Rate cut: costs via imputed rent / housing price inflation, market concentration
 
       // Hike impact (% of income) — negative means cost
-      const hikeDebt = debtSensitivity * 0.4;              // direct debt servicing cost
-      const hikeSupport = supportLevel * 0.2;             // benefit system strain
-      const hikeIncome = essentialSpending * 0.15;        // indirect (pass-through inflation)
-      const hikeBenefit = investmentFlex * 0.3;           // some benefit from higher rates (savers)
-      const hikeTotal = hikeDebt + hikeSupport + hikeIncome - hikeBenefit;
+      const hikeDebt = debtSensitivity * 0.4;
+      const hikeSupport = supportLevel * 0.2;
+      const hikeIncome = essentialSpending * 0.15;
+      const hikeMarketConc = marketConcentration * 0.25;  // oligopolistic providers raise prices in high-rate envs
+      const hikeBenefit = investmentFlex * 0.3;
+      const hikeTotal = hikeDebt + hikeSupport + hikeIncome + hikeMarketConc - hikeBenefit;
 
       // Cut impact (% of income) — negative means cost
-      const cutImputedRent = imputedRentImpact * 0.5;     // housing price inflation
-      const cutEssential = essentialSpending * 0.2;       // cost of essentials rises with property market
-      const cutInvestmentBenefit = investmentFlex * 0.25; // can benefit from rising assets
-      const cutTotal = cutImputedRent + cutEssential - cutInvestmentBenefit;
+      const cutImputedRent = imputedRentImpact * 0.5;
+      const cutEssential = essentialSpending * 0.2;
+      const cutMarketConc = marketConcentration * 0.25;   // market concentration means cuts don't flow through
+      const cutInvestmentBenefit = investmentFlex * 0.25;
+      const cutTotal = cutImputedRent + cutEssential + cutMarketConc - cutInvestmentBenefit;
 
       return {
         hike: -Math.abs(hikeTotal),
@@ -647,6 +658,7 @@
         supportLevel,
         investmentFlex,
         essentialSpending,
+        marketConcentration,
       };
     }
 
@@ -700,14 +712,26 @@
           'very-high': 'Full flexibility. Can profit from either direction.',
         },
       },
+      marketConcentration: {
+        icon: '⚡',
+        title: 'Market Concentration',
+        desc: 'Oligopolistic essential services (power, insurance, internet) raise costs regardless of rate direction — and competition rarely delivers relief.',
+        bandDesc: {
+          'very-low': 'Some essential costs subsidised or regulated. Partial protection.',
+          'low': 'Heavily exposed to power and insurance cost increases. Few alternatives.',
+          'moderate': 'Most exposed. Cannot avoid oligopolistic essential services. No way to switch or hedge.',
+          'high': 'Can select, switch providers, or self-provide where possible.',
+          'very-high': 'Can avoid, negotiate directly, or self-provide. Minimal exposure.',
+        },
+      },
     };
 
     // ─── Narrative Text ────────────────────────────────────────────────────
     const NARRATIVES = {
       'very-low': 'Very low income earners are relatively insulated from OCR changes. The social contract — benefits, accommodation supplement, and community services — provides a cushion. When rates rise, your benefits often adjust upward. When rates fall, you may be less affected by housing inflation if you\'re in social housing or benefit-supported rental.',
       'low': 'Low income earners are partially protected but increasingly exposed as support phases out. Some debt (consumer, car loans) is sensitive to rate hikes, and rising rents increasingly squeeze. The safety net is there but full of holes at this income level.',
-      'moderate': 'Moderate-income earners sit in the most exposed position. Too "wealthy" to receive meaningful government support, yet carrying enough debt — or paying enough rent — to feel every OCR move. When rates rise, your mortgage or rent costs climb. When rates fall, housing prices inflate, raising your long-term housing costs and essential expenses tied to the property market.',
-      'high': 'High income earners have significant investment flexibility and lower essential spending as a share of income. While still exposed to mortgage costs, the ability to shift investments (bonds benefit from rate hikes, equities and property from rate cuts) means you can partially hedge in either direction.',
+      'moderate': 'Moderate-income earners are the most exposed. You face a double squeeze: OCR hikes increase your mortgage or rental costs directly, while OCR cuts inflate house prices and the imputed cost of your housing. Add to that market concentration and privatised essential services — power, internet, insurance — where reduced competition means price falls don't flow through to you the way economic models suggest. Too "wealthy" for meaningful support, too constrained by debt and essential costs to hedge. You lose both ways.',
+      'high': 'High income earners have significant investment flexibility and lower essential spending as a share of income. While still exposed to mortgage costs and market concentration effects, the ability to shift investments — bonds benefit from rate hikes, equities and property from rate cuts — means meaningful hedging is possible.',
       'very-high': 'Very high income earners are the least exposed to OCR changes. Essentials are a small fraction of spending, investment flexibility is maximal, and any debt costs are easily managed. Rate hikes benefit your bond holdings; rate cuts inflate your asset values. You win either way.',
     };
 
@@ -802,7 +826,7 @@
       const container = document.getElementById('exposure-factors');
       container.innerHTML = '';
 
-      const factors = ['debtSensitivity', 'imputedRentImpact', 'supportLevel', 'investmentFlex'];
+      const factors = ['debtSensitivity', 'imputedRentImpact', 'supportLevel', 'investmentFlex', 'marketConcentration'];
 
       factors.forEach(key => {
         const factor = EXPOSURE_FACTORS[key];
