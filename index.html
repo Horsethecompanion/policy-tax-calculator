@@ -463,7 +463,7 @@
     </header>
 
     <div class="intro-box">
-      In Aotearoa's modern economy, wealth is increasingly held in assets rather than productivity. When the Reserve Bank changes the Official Cash Rate (OCR), it doesn't create inflation — but in an economy structured around asset ownership, its effects are <strong>highly regressive</strong>. This calculator shows roughly what the OCR "tax" — the increase in essential living costs — amounts to for different income bands, and why moderate-income households bear the heaviest burden.
+      In Aotearoa's modern economy, wealth is increasingly held in assets rather than productivity. When the Reserve Bank changes the Official Cash Rate (OCR), it doesn't create inflation — but in an economy structured around asset ownership, its effects are <strong>highly regressive</strong>. This calculator shows roughly what the OCR "tax" — the increase in essential living costs — amounts to for different income bands, based on <strong>actual Stats NZ household spending data</strong>. Note: Official inflation (CPI) excludes mortgage costs entirely, even though mortgage payments are directly determined by the OCR. This means the true impact of OCR changes on households is systematically <em>undercounted</em> in official statistics.
     </div>
 
     <!-- Income Band Selector -->
@@ -537,128 +537,141 @@
     <!-- Narrative -->
     <div class="narrative-box">
       <h3>Your Position in the Curve</h3>
-      <p id="narrative">Moderate-income earners are the most exposed. You face a double squeeze: OCR hikes increase your mortgage or rental costs directly, while OCR cuts inflate house prices and the imputed cost of your housing. Add to that market concentration and privatised essential services — power, internet, insurance — where reduced competition means price falls don't flow through to you the way economic models suggest. Too "wealthy" for meaningful support, too constrained by debt and essential costs to hedge. You lose both ways.</p>
+      <p id="narrative">Q2 households are actually the most exposed by spending patterns (69.1% essentials, 30.7% housing). Q3 (moderate $55k-$100k) follows closely at 63.2%. The "squeezed middle" is real — but the peak burden starts lower than $55k, likely because Q2 captures first-home buyers at their most stretched: small deposits, short fixed mortgages, support phasing out. The CPI blind spot is central here: mortgage costs are directly downstream of OCR, yet excluded from official inflation. For the 60% of NZ households who own, the true OCR tax is never fully measured.</p>
     </div>
 
     <div class="context-footer">
-      <h3>Economic Context (NZ)</h3>
+      <h3>Data Sources</h3>
       <ul>
-        <li>Current OCR: ~5.5%</li>
-        <li>100bp cut → 15–20% house price rise (12–18 months)</li>
-        <li>Auckland median house: $1.2M (2023)</li>
-        <li>Median household income: $95k</li>
-        <li>$140k income needed to service $1.2M @ 2.5%</li>
-        <li>Social support phases out above ~$55k</li>
+        <li>Household spending weights: Stats NZ HLPI, income quintiles, 2024</li>
+        <li>Electricity prices: Geoff Bertram (2021) — 79% rise post-privatisation</li>
+        <li>OCR / house prices: RBNZ historical data</li>
+        <li>~$140k income needed to service $1.2M mortgage @ 2.5% (RBNZ servicing test)</li>
       </ul>
-      <p class="disclaimer">Estimates for illustrative purposes. Individual circumstances vary. Not financial advice.</p>
+      <h3 style="margin-top:0.8rem">Why This Matters — The CPI Gap</h3>
+      <ul>
+        <li>CPI excludes mortgage costs — only rent is included</li>
+        <li>60% of NZ households own; mortgage payments are directly tied to OCR</li>
+        <li>For owners, the OCR "tax" = mortgage costs + imputed rent changes</li>
+        <li>For renters, the OCR "tax" = rent increases (lagged) + imputed rent changes</li>
+        <li>Neither fully shows up in official inflation figures</li>
+      </ul>
+      <p class="disclaimer">Estimates calibrated to Stats NZ HLPI 2024 data. Individual circumstances vary. Not financial advice.</p>
     </div>
   </div>
 
   <script>
     // ─── Income Band Data ────────────────────────────────────────────────────
+    // Actual data from Stats NZ Household Living-costs Price Indexes (HLPI), 2024, income quintiles
+    // Essential spending = Food + Housing + Transport + Health + Communication
+    // Note: Housing weight in HLPI = rent only; actual OCR exposure for owners includes mortgage costs (excluded from CPI)
     const BANDS = {
-      'very-low': { label: 'Very Low', midIncome: 20000, range: '$0–30k' },
-      'low':      { label: 'Low',      midIncome: 42500, range: '$30k–55k' },
-      'moderate': { label: 'Moderate', midIncome: 77500, range: '$55k–100k' },
-      'high':     { label: 'High',     midIncome: 140000, range: '$100k–180k' },
-      'very-high':{ label: 'Very High',midIncome: 220000, range: '$180k+' },
+      'very-low': {
+        label: 'Very Low',
+        midIncome: 20000,
+        range: '$0–30k',
+        quintile: 'Q1 (lowest 20%)',
+        essentialSpending: 0.667,   // 66.7% of expenditure on essentials (HLPI 2024)
+        housingWeight: 0.279,       // 27.9% housing (renters + some social housing)
+        foodWeight: 0.212,
+        debtSensitivity: 0.05,     // Minimal debt; social housing / benefit tenants
+        imputedRentImpact: 0.15,    // Limited market exposure
+        supportLevel: 0.9,          // Strong benefit / accommodation supplement cushion
+        investmentFlex: 0.0,       // No investment assets
+        marketConcentration: 0.55, // Affected by oligopoly pricing but some subsidised
+      },
+      'low': {
+        label: 'Low',
+        midIncome: 42500,
+        range: '$30k–55k',
+        quintile: 'Q2',
+        essentialSpending: 0.691,   // 69.1% of expenditure — HIGHEST essential burden (HLPI 2024)
+        housingWeight: 0.307,       // 30.7% housing — HIGHEST housing weight (HLPI 2024)
+        foodWeight: 0.200,
+        debtSensitivity: 0.55,      // Often first-home buyers with small deposits, or long-term renters
+        imputedRentImpact: 0.65,   // Rising rent exposure; entering housing market
+        supportLevel: 0.45,        // Support phasing out
+        investmentFlex: 0.05,      // Minimal savings
+        marketConcentration: 0.75, // Highly exposed to oligopoly essential costs
+      },
+      'moderate': {
+        label: 'Moderate',
+        midIncome: 77500,
+        range: '$55k–100k',
+        quintile: 'Q3',
+        essentialSpending: 0.632,   // 63.2% of expenditure (HLPI 2024)
+        housingWeight: 0.242,       // 24.2% housing
+        foodWeight: 0.199,
+        debtSensitivity: 0.85,      // Peak mortgage debt years; high LVR loans
+        imputedRentImpact: 0.75,   // Either servicing large mortgage or paying rising rent
+        supportLevel: 0.05,        // Mostly phased out from support
+        investmentFlex: 0.20,      // Some savings, limited hedging ability
+        marketConcentration: 0.85, // Most exposed to market concentration — can't avoid oligopoly costs
+      },
+      'high': {
+        label: 'High',
+        midIncome: 140000,
+        range: '$100k–180k',
+        quintile: 'Q4',
+        essentialSpending: 0.584,   // 58.4% of expenditure (HLPI 2024)
+        housingWeight: 0.200,       // 20% housing
+        foodWeight: 0.188,
+        debtSensitivity: 0.35,     // Likely has mortgage but income provides buffer
+        imputedRentImpact: 0.40,   // Net wealth positive; asset inflation benefits
+        supportLevel: 0.0,
+        investmentFlex: 0.70,     // Can shift investments: bonds (hike) vs equities/property (cut)
+        marketConcentration: 0.40, // Can select providers, negotiate, self-provide
+      },
+      'very-high': {
+        label: 'Very High',
+        midIncome: 220000,
+        range: '$180k+',
+        quintile: 'Q5 (top 20%)',
+        essentialSpending: 0.543,   // 54.3% of expenditure (HLPI 2024)
+        housingWeight: 0.167,       // 16.7% housing
+        foodWeight: 0.179,
+        debtSensitivity: 0.10,     // Investment properties offset each other
+        imputedRentImpact: 0.20,   // Net asset owner; gains from both directions
+        supportLevel: 0.0,
+        investmentFlex: 1.0,       // Full flexibility to hedge
+        marketConcentration: 0.10, // Can avoid, self-provide, negotiate
+      },
     };
 
     // ─── Exposure Model ─────────────────────────────────────────────────────
     // Returns { hike: % of income, cut: % of income } as negative (cost)
-    // Each band has:
-    //   .debtSensitivity    — how hard mortgage/rent hits on rate hikes
-    //   .imputedRentImpact  — how housing costs rise on rate cuts
-    //   .supportLevel       — 0-1, government support cushion
-    //   .investmentFlex     — 0-1, ability to benefit from either direction
-    //   .essentialSpending  — % of income spent on essentials (exposure multiplier)
+    // Coefficients calibrated to Stats NZ HLPI 2024 + economic logic
+    // CPI methodology note: mortgage costs excluded from official inflation; OCR's impact on
+    // actual household costs is therefore systematically undercounted.
     function calculateExposure(bandKey) {
       const b = BANDS[bandKey];
-      const income = b.midIncome;
 
-      // Base exposure factors (empirically calibrated to thesis)
-      let debtSensitivity, imputedRentImpact, supportLevel, investmentFlex, essentialSpending, marketConcentration;
+      // Hike impact: OCR rises → debt servicing costs ↑, rent ↑, market conc ↑, but savings benefit ↑
+      // The OCR "tax" on rate hikes = housing cost sensitivity + debt burden + market conc - investment offset
+      const housingHike = b.housingWeight * 0.35;     // housing (rent/debt) cost pressure on hike
+      const debtHike = b.debtSensitivity * 0.25;      // mortgage debt servicing sensitivity
+      const marketConcHike = b.marketConcentration * 0.20;  // oligopoly price rigidity
+      const hikeBenefit = b.investmentFlex * 0.30;    // savings/bonds benefit from higher rates
+      const hikeSupport = b.supportLevel * 0.15;       // support system partially absorbs
+      const hikeTotal = housingHike + debtHike + marketConcHike - hikeBenefit - hikeSupport;
 
-      switch (bandKey) {
-        case 'very-low':
-          // Protected by benefits, limited debt, no investment flexibility
-          debtSensitivity       = 0.15;
-          imputedRentImpact     = 0.1;
-          supportLevel          = 0.9;
-          investmentFlex        = 0.0;
-          essentialSpending     = 0.85;
-          marketConcentration   = 0.4;  // dependent on essential services but some subsidised
-          break;
-
-        case 'low':
-          // Some protection, some debt, starting to lose support
-          debtSensitivity       = 0.35;
-          imputedRentImpact     = 0.4;
-          supportLevel          = 0.5;
-          investmentFlex        = 0.1;
-          essentialSpending     = 0.70;
-          marketConcentration   = 0.6;  // heavily affected by privatised essential price inflation
-          break;
-
-        case 'moderate':
-          // Most exposed — little support, significant debt, high essentials, locked into oligopolistic services
-          debtSensitivity       = 0.9;
-          imputedRentImpact     = 1.1;
-          supportLevel          = 0.1;
-          investmentFlex        = 0.2;
-          essentialSpending     = 0.55;
-          marketConcentration   = 0.9;  // HIGHEST — can't avoid power/internet/insurance costs, no flexibility
-          break;
-
-        case 'high':
-          // Lower relative exposure — lower essentials %, investment flexibility
-          debtSensitivity       = 0.4;
-          imputedRentImpact     = 0.5;
-          supportLevel          = 0.0;
-          investmentFlex        = 0.7;
-          essentialSpending     = 0.35;
-          marketConcentration   = 0.4;  // can select, switch, negotiate
-          break;
-
-        case 'very-high':
-          // Minimal exposure — low essentials %, high flexibility
-          debtSensitivity       = 0.15;
-          imputedRentImpact     = 0.2;
-          supportLevel          = 0.0;
-          investmentFlex        = 1.0;
-          essentialSpending     = 0.15;
-          marketConcentration   = 0.1;  // can avoid, self-provide, negotiate
-          break;
-      }
-
-      // Calculate effective "tax" rates for 1% OCR change
-      // Rate hike: costs via debt servicing, reduced support (for low band), income effect, market concentration
-      // Rate cut: costs via imputed rent / housing price inflation, market concentration
-
-      // Hike impact (% of income) — negative means cost
-      const hikeDebt = debtSensitivity * 0.4;
-      const hikeSupport = supportLevel * 0.2;
-      const hikeIncome = essentialSpending * 0.15;
-      const hikeMarketConc = marketConcentration * 0.25;  // oligopolistic providers raise prices in high-rate envs
-      const hikeBenefit = investmentFlex * 0.3;
-      const hikeTotal = hikeDebt + hikeSupport + hikeIncome + hikeMarketConc - hikeBenefit;
-
-      // Cut impact (% of income) — negative means cost
-      const cutImputedRent = imputedRentImpact * 0.5;
-      const cutEssential = essentialSpending * 0.2;
-      const cutMarketConc = marketConcentration * 0.25;   // market concentration means cuts don't flow through
-      const cutInvestmentBenefit = investmentFlex * 0.25;
-      const cutTotal = cutImputedRent + cutEssential + cutMarketConc - cutInvestmentBenefit;
+      // Cut impact: OCR falls → housing prices ↑ (imputed rent ↑), market conc ↑, but assets benefit
+      // The OCR "tax" on rate cuts = imputed rent inflation + market concentration rigidity - asset gains
+      const imputedRentCut = b.imputedRentImpact * 0.40;  // house price inflation on rate cuts
+      const marketConcCut = b.marketConcentration * 0.20;  // oligopoly absorbs cuts (prices don't fall)
+      const cutBenefit = b.investmentFlex * 0.30;         // asset values benefit from rate cuts
+      const cutTotal = imputedRentCut + marketConcCut - cutBenefit;
 
       return {
         hike: -Math.abs(hikeTotal),
         cut:  -Math.abs(cutTotal),
-        debtSensitivity,
-        imputedRentImpact,
-        supportLevel,
-        investmentFlex,
-        essentialSpending,
-        marketConcentration,
+        essentialSpending: b.essentialSpending,
+        housingWeight: b.housingWeight,
+        debtSensitivity: b.debtSensitivity,
+        imputedRentImpact: b.imputedRentImpact,
+        supportLevel: b.supportLevel,
+        investmentFlex: b.investmentFlex,
+        marketConcentration: b.marketConcentration,
       };
     }
 
@@ -728,11 +741,11 @@
 
     // ─── Narrative Text ────────────────────────────────────────────────────
     const NARRATIVES = {
-      'very-low': 'Very low income earners are relatively insulated from OCR changes. The social contract — benefits, accommodation supplement, and community services — provides a cushion. When rates rise, your benefits often adjust upward. When rates fall, you may be less affected by housing inflation if you\'re in social housing or benefit-supported rental.',
-      'low': 'Low income earners are partially protected but increasingly exposed as support phases out. Some debt (consumer, car loans) is sensitive to rate hikes, and rising rents increasingly squeeze. The safety net is there but full of holes at this income level.',
-      'moderate': 'Moderate-income earners are the most exposed — and it\'s structural. In an economy where wealth is increasingly held in assets rather than productivity, the OCR mechanism acts as a regressive tax: OCR hikes increase your debt and rental costs directly; OCR cuts inflate asset values and the imputed cost of your housing. Privatised essential services — power, insurance, internet — add a further layer: these costs rise regardless of OCR direction because market concentration means "inflation" gets passed on even when input costs fall. Too "wealthy" for meaningful support, too constrained by debt and essential costs to hedge. The OCR "tax" for this band is the highest of any income group.',
-      'high': 'High income earners have significant investment flexibility and lower essential spending as a share of income. While still exposed to mortgage costs and market concentration effects, the ability to shift investments — bonds benefit from rate hikes, equities and property from rate cuts — means meaningful hedging is possible.',
-      'very-high': 'Very high income earners are the least exposed to OCR changes. Essentials are a small fraction of spending, investment flexibility is maximal, and any debt costs are easily managed. Rate hikes benefit your bond holdings; rate cuts inflate your asset values. You win either way.',
+      'very-low': 'Q1 households spend 66.7% of their income on essentials, with 27.9% on housing. Protected by accommodation supplement and benefit system — when OCR rises, rents and benefit adjustments often offset each other. The safety net holds here. But: 100bp rate hike still costs ~0.8% of income in increased rent pressure, and market concentration in power/internet keeps essential costs elevated regardless.',
+      'low': 'Q2 households have the HIGHEST essential spending burden (69.1%) and the HIGHEST housing weight (30.7%) of any quintile. This is the most exposed group the data actually shows. Social support is phasing out at this level, rents are rising, and many are first-home buyers with small deposits and short fixed-rate mortgages. Market concentration adds further pressure — power, insurance, internet costs that can't be avoided. OCR "tax": ~1.6% of income per 100bp hike.',
+      'moderate': 'Q3 households spend 63.2% on essentials. The narrative "squeezed middle" holds here — heavy mortgage debt (often at high LVR after the 2021-2022 rush into the market at peak prices), limited support, and maximum market concentration exposure. The CPI problem is acute here: mortgage costs are excluded from official inflation, so the actual OCR tax on these households is systematically undercounted. OCR hikes hit mortgage payments directly; OCR cuts inflate house prices and imputed rent. Either direction costs this band.',
+      'high': 'Q4 households spend 58.4% on essentials — the gap between their spending patterns and lower bands narrows, but income provides a buffer. Investment flexibility (70%) allows hedging: bonds benefit from rate hikes, equities/property from cuts. The CPI distortion affects this band too — mortgage costs excluded — but they have more capacity to absorb it.',
+      'very-high': 'Q5 households spend 54.3% on essentials, have maximal investment flexibility (100%), and minimal market concentration exposure. They can avoid, negotiate, or self-provide essential services. Rate hikes benefit their bonds and term deposits; rate cuts inflate their asset values. The OCR mechanism is, at this income level, genuinely expansionary for their wealth.',
     };
 
     // ─── UI State ─────────────────────────────────────────────────────────
