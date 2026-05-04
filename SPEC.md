@@ -1,10 +1,20 @@
 # Monetary Policy "Tax" Calculator — Specification
 
 ## Core Thesis
-OCR changes act as a regressive "tax" on New Zealanders — but the exposure is U-shaped across income bands:
-- **Low income**: protected by benefit system / housing support. Limited direct exposure.
-- **Moderate income**: MOST exposed. Too "rich" for meaningful support, but carrying debt and/or paying rising rents. Imputed rent hits them. They feel both housing price inflation AND debt servicing costs simultaneously.
-- **High income**: Less exposed. Essentials are small % of spending. Investment flexibility means they can hedge in either direction.
+In Aotearoa's modern economy, wealth is increasingly held in assets rather than productivity. When the Reserve Bank changes the OCR, it doesn't create inflation — but in an economy structured around asset ownership, its effects are **highly regressive**. This calculator shows roughly what the OCR "tax" — the increase in essential living costs caused by OCR changes — amounts to for different income bands.
+
+**The tool does NOT claim:**
+- That OCR changes cause inflation
+- That all inflation is OCR-manufactured
+
+**The tool DOES show:**
+- That the OCR mechanism, as a transmission belt for economic adjustment, redistributes costs regressively
+- That moderate-income households bear the highest "tax" because they can't avoid essential cost exposure, have no meaningful government support, and can't flex investments to benefit from both directions
+
+## Key Framing
+- **OCR ≠ inflation.** The RBNZ uses OCR to target an inflation rate that is itself partly a product of how the economy is structured.
+- **OCR mechanism ≠ neutral.** The transmission of OCR changes into essential living costs falls regressively.
+- **The "tax" =** % increase in essential costs per 1% OCR change, expressed as % of annual income.
 
 ## Income Bands
 | Band | Annual Income | OCR Exposure | Support Level | Investment Flexibility |
@@ -17,44 +27,33 @@ OCR changes act as a regressive "tax" on New Zealanders — but the exposure is 
 
 ## Exposure Factors
 
-### 1. Rate Hike Impact (positive = cost increase)
-- **Debt servicing**: mortgage holders feel increases immediately
-- **Rental pressure**: landlords pass costs to tenants
-- **Phase-out cliff**: moderate earners lose accommodation supplement as income rises
+### 1. Debt Servicing (🏦)
+- Mortgage holders feel rate changes immediately in payment amounts
+- Renters feel indirectly via landlord cost pass-through
+- Moderate band: high debt relative to income, most exposed
 
-### 2. Rate Cut Impact (positive = cost increase, i.e. you're worse off)
-- **Imputed rent**: even owner-occupiers face rising housing costs (opportunity cost of not renting)
-- **Housing entry cost**: first-home buyers priced out as asset values inflate
-- **Essential inflation**: food, energy, transport costs tied to housing market concentration
+### 2. Imputed Rent / Housing Cost Risk (🏠)
+- Even owner-occupiers face the "imputed rent" of their housing — if they had to rent their home, what would it cost?
+- Rate cuts inflate this imputed cost (house prices rise = renting is more expensive)
+- Rate hikes reduce it (house prices fall, but debt servicing costs rise)
 
-### 3. Government Support Phase-out
-- Accommodation Supplement, Working for Families, etc. phase out as income increases
-- Moderate band ($55k-100k) gets minimal support — the "squeezed middle"
-- This creates a "welfare cliff" that adds to effective exposure
+### 3. Social Safety Net (🛡️)
+- Government support (accommodation supplement, Working for Families) cushions some groups
+- Moderate band: mostly phased out, no cushion
 
-## Interaction Matrix
-| Factor | Low Income | Moderate Income | High Income |
-|--------|-----------|-----------------|-------------|
-| Debt servicing | Low | HIGH | Moderate |
-| Imputed rent | Low | HIGH | Moderate |
-| Support phase-out | High→Moderate | Minimal | None |
-| Investment flexibility | None | Limited | High |
+### 4. Investment Flexibility (📊)
+- High income can shift investments: bonds benefit from rate hikes, equities/property from rate cuts
+- Moderate income: some savings but limited ability to hedge both directions
 
-## UI Design
+### 5. Market Concentration / Essential Services (⚡)
+- Privatised essential services (power, insurance, internet) raise prices regardless of OCR direction
+- Because market concentration means "inflation" gets passed on even when input costs fall
+- Evidence: residential electricity prices up 79% since 1990 (post-privatisation) — Geoff Bertram, *How Neoliberalism Doubled the Price of Electricity*
+- Moderate band is most exposed (can't avoid, can't switch, no negotiating power)
 
-### Layout
-1. **Income band selector** (primary input — not exact salary)
-2. **Rate direction toggle** (hike / cut / both)
-3. **Results per band** — the U-curve visualization
-4. **"You are here" indicator** for selected band
-5. **Exposure breakdown** — which factors drive the result for your band
-
-### Visualization
-- **U-curve chart**: X-axis = income bands, Y-axis = effective "tax" (% of income)
-- Bars coloured to show which exposure factors dominate
-- Clear marker showing selected band
-
-### Outputs
-- Effective "tax" rate per band (% of income)
-- Dominant exposure factors explained
-- Narrative description of why your band is exposed this way
+## Data Sources
+- Stats NZ Household Living-costs Price Indexes (HLPIs) — differential inflation by income quintile
+- Stats NZ Household Income and Housing Cost Statistics (HES/HILS)
+- RBNZ research on monetary policy distributional effects
+- Geoff Bertram (2021): "How Neoliberalism Doubled the Price of Electricity"
+- Note: coefficients are calibrated to thesis; actual HLPI weight data by quintile should be incorporated for precision
