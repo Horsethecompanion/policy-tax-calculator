@@ -17,6 +17,7 @@
       --green: #10b981;
       --red: #ef4444;
       --yellow: #f59e0b;
+      --orange: #f97316;
       --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
@@ -32,346 +33,407 @@
     }
 
     .container {
-      max-width: 860px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
     header {
       text-align: center;
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
     }
 
     h1 {
-      font-size: 2rem;
+      font-size: 1.85rem;
       font-weight: 800;
       background: linear-gradient(135deg, var(--accent), var(--accent2));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
 
     .tagline {
       color: var(--muted);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .intro-box {
       background: var(--surface);
       border: 1px solid #ffffff10;
       border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 2rem;
-      font-size: 0.875rem;
+      padding: 1.1rem 1.3rem;
+      margin-bottom: 1.75rem;
+      font-size: 0.82rem;
       color: var(--muted);
       border-left: 3px solid var(--accent);
+      line-height: 1.6;
     }
 
     .intro-box strong {
       color: var(--text);
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+    /* Income Band Selector */
+    .band-selector {
+      margin-bottom: 1.5rem;
     }
 
-    @media (max-width: 600px) {
-      .grid { grid-template-columns: 1fr; }
-    }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid #ffffff10;
-      border-radius: 16px;
-      padding: 1.5rem;
-    }
-
-    label {
+    .band-selector label {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--muted);
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.6rem;
     }
 
-    input[type="number"] {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid #ffffff15;
+    .band-options {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.5rem;
+    }
+
+    @media (max-width: 700px) {
+      .band-options { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .band-btn {
+      background: var(--surface);
+      border: 2px solid #ffffff15;
       border-radius: 10px;
-      color: var(--text);
-      font-size: 1.1rem;
-      font-weight: 700;
-      padding: 0.65rem 0.9rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    input[type="number"]:focus {
-      border-color: var(--accent);
-    }
-
-    select {
-      width: 100%;
-      background: var(--surface2);
-      border: 1px solid #ffffff15;
-      border-radius: 10px;
-      color: var(--text);
-      font-size: 0.95rem;
-      padding: 0.65rem 0.9rem;
-      outline: none;
-      cursor: pointer;
-    }
-
-    select:focus {
-      border-color: var(--accent);
-    }
-
-    .range-wrap {
-      position: relative;
-      padding-top: 2rem;
-    }
-
-    .range-wrap input[type="range"] {
-      width: 100%;
-      appearance: none;
-      height: 6px;
-      border-radius: 3px;
-      background: linear-gradient(to right, var(--green), var(--accent), var(--red));
-      outline: none;
-      cursor: pointer;
-    }
-
-    .range-wrap input[type="range"]::-webkit-slider-thumb {
-      appearance: none;
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--text);
-      border: 3px solid var(--accent);
-      cursor: pointer;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
-    }
-
-    .range-display {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 0.75rem;
-    }
-
-    .current-ocr {
+      padding: 0.6rem 0.4rem;
+      color: var(--muted);
       font-size: 0.75rem;
-      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
     }
 
-    .rate-value {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: var(--accent);
-      font-variant-numeric: tabular-nums;
+    .band-btn:hover {
+      border-color: var(--accent);
+      color: var(--text);
     }
 
-    .range-labels {
+    .band-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .band-btn .band-range {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 400;
+      opacity: 0.8;
+      margin-top: 0.15rem;
+    }
+
+    /* Rate direction toggle */
+    .rate-toggle {
       display: flex;
-      justify-content: space-between;
-      font-size: 0.7rem;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      background: var(--surface);
+      padding: 0.4rem;
+      border-radius: 12px;
+      border: 1px solid #ffffff10;
+    }
+
+    .rate-toggle button {
+      flex: 1;
+      padding: 0.6rem;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
       color: var(--muted);
-      margin-top: 0.4rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .range-labels span:first-child { color: var(--green); }
-    .range-labels span:last-child { color: var(--red); }
-
-    .full-width {
-      grid-column: 1 / -1;
+    .rate-toggle button:hover {
+      color: var(--text);
     }
 
-    /* Results */
-    .results {
-      margin-top: 2rem;
+    .rate-toggle button.active {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .rate-toggle button.active.hike {
+      background: var(--red);
+      color: white;
+    }
+
+    .rate-toggle button.active.cut {
+      background: var(--green);
+      color: white;
+    }
+
+    /* Results grid */
+    .results-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
-    @media (max-width: 600px) {
-      .results { grid-template-columns: 1fr; }
+    @media (max-width: 650px) {
+      .results-grid { grid-template-columns: 1fr; }
     }
 
     .result-card {
       background: var(--surface);
       border: 1px solid #ffffff10;
-      border-radius: 16px;
-      padding: 1.5rem;
+      border-radius: 14px;
+      padding: 1.25rem;
     }
 
-    .result-card.bad { border-top: 3px solid var(--red); }
-    .result-card.bad2 { border-top: 3px solid var(--yellow); }
+    .result-card.hike { border-top: 3px solid var(--red); }
+    .result-card.cut { border-top: 3px solid var(--green); }
 
     .result-label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--muted);
       margin-bottom: 0.4rem;
     }
 
     .result-value {
-      font-size: 1.6rem;
-      font-weight: 800;
+      font-size: 1.8rem;
+      font-weight: 900;
       font-variant-numeric: tabular-nums;
     }
 
-    .result-value.negative { color: var(--red); }
-    .result-value.positive { color: var(--green); }
+    .result-value.bad { color: var(--red); }
+    .result-value.good { color: var(--green); }
     .result-value.neutral { color: var(--yellow); }
 
-    .result-sub {
-      font-size: 0.8rem;
+    .result-note {
+      font-size: 0.75rem;
       color: var(--muted);
-      margin-top: 0.25rem;
+      margin-top: 0.3rem;
     }
 
-    .result-detail {
-      font-size: 0.8rem;
-      color: var(--muted);
-      margin-top: 0.5rem;
-      padding-top: 0.5rem;
-      border-top: 1px solid #ffffff10;
+    /* U-curve chart */
+    .curve-section {
+      background: var(--surface);
+      border: 1px solid #ffffff10;
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
-    /* Tax summary */
-    .tax-summary {
-      margin-top: 2rem;
-      background: linear-gradient(135deg, #2d1b69 0%, #1e3a5f 100%);
-      border: 1px solid #6366f130;
-      border-radius: 20px;
-      padding: 2rem;
+    .curve-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 1rem;
       text-align: center;
     }
 
-    .tax-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: #a5b4fc;
-      margin-bottom: 0.5rem;
-    }
-
-    .tax-amount {
-      font-size: 3rem;
-      font-weight: 900;
-      background: linear-gradient(135deg, #c084fc, #818cf8);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      line-height: 1.1;
-    }
-
-    .tax-sub {
-      font-size: 0.85rem;
-      color: #a5b4fc;
-      margin-top: 0.5rem;
-    }
-
-    /* Chart section */
-    .chart-section {
-      margin-top: 2rem;
-    }
-
-    .chart-title {
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--muted);
-      margin-bottom: 1rem;
-    }
-
-    .bar-chart {
+    .curve-chart {
       display: flex;
-      gap: 1.5rem;
       align-items: flex-end;
-      height: 180px;
-      background: var(--surface);
-      border-radius: 16px;
-      padding: 1.5rem;
-      border: 1px solid #ffffff10;
+      gap: 0.5rem;
+      height: 160px;
+      padding: 0 0.5rem;
     }
 
-    .bar-group {
+    .curve-bar-wrap {
       flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 0.5rem;
       height: 100%;
+      position: relative;
     }
 
-    .bars {
-      display: flex;
-      gap: 0.5rem;
-      align-items: flex-end;
+    .curve-bar-container {
       flex: 1;
-    }
-
-    .bar {
-      width: 36px;
-      border-radius: 6px 6px 0 0;
+      width: 100%;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      font-size: 0.65rem;
-      font-weight: 700;
-      padding-bottom: 4px;
-      min-height: 4px;
     }
 
-    .bar.asset { background: linear-gradient(180deg, var(--accent2), #7c3aed); }
-    .bar.debt  { background: linear-gradient(180deg, var(--red), #b91c1c); }
+    .curve-bar {
+      width: 70%;
+      max-width: 50px;
+      border-radius: 6px 6px 0 0;
+      transition: height 0.4s ease;
+      position: relative;
+    }
 
-    .bar-label {
-      font-size: 0.72rem;
+    .curve-bar.hike-bar { background: linear-gradient(180deg, var(--red), #b91c1c); }
+    .curve-bar.cut-bar { background: linear-gradient(180deg, var(--orange), #c2410c); }
+
+    .curve-bar.highlight { box-shadow: 0 0 0 3px var(--accent), 0 0 20px var(--accent); }
+
+    .curve-bar-label {
+      font-size: 0.62rem;
       color: var(--muted);
       text-align: center;
+      margin-top: 0.4rem;
       line-height: 1.3;
+    }
+
+    .curve-bar-label strong {
+      display: block;
+      color: var(--text);
+      font-size: 0.7rem;
+    }
+
+    .curve-legend {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    .curve-legend span::before {
+      content: '■ ';
+      font-size: 0.6rem;
+      vertical-align: middle;
+    }
+
+    .curve-legend .hike-legend::before { color: var(--red); }
+    .curve-legend .cut-legend::before { color: var(--orange); }
+
+    /* Exposure breakdown */
+    .exposure-section {
+      background: var(--surface);
+      border: 1px solid #ffffff10;
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .exposure-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    .exposure-factors {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+
+    @media (max-width: 550px) {
+      .exposure-factors { grid-template-columns: 1fr; }
+    }
+
+    .exposure-factor {
+      background: var(--surface2);
+      border-radius: 10px;
+      padding: 0.85rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.6rem;
+    }
+
+    .exposure-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 0.1rem;
+    }
+
+    .exposure-factor h4 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+
+    .exposure-factor p {
+      font-size: 0.72rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .exposure-bar-wrap {
+      background: var(--surface2);
+      border-radius: 8px;
+      height: 6px;
+      margin-top: 0.4rem;
+      overflow: hidden;
+    }
+
+    .exposure-bar {
+      height: 100%;
+      border-radius: 8px;
+      transition: width 0.4s ease;
+    }
+
+    .exposure-bar.high { background: var(--red); }
+    .exposure-bar.medium { background: var(--yellow); }
+    .exposure-bar.low { background: var(--green); }
+
+    /* Narrative box */
+    .narrative-box {
+      background: linear-gradient(135deg, #2d1b69 0%, #1e3a5f 100%);
+      border: 1px solid #6366f130;
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .narrative-box h3 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #a5b4fc;
+      margin-bottom: 0.6rem;
+    }
+
+    .narrative-box p {
+      font-size: 0.85rem;
+      color: #c4b5fd;
+      line-height: 1.6;
     }
 
     /* Context footer */
     .context-footer {
-      margin-top: 2rem;
-      padding: 1.25rem 1.5rem;
+      padding: 1.1rem 1.3rem;
       background: var(--surface);
       border: 1px solid #ffffff10;
-      border-radius: 16px;
+      border-radius: 14px;
     }
 
     .context-footer h3 {
-      font-size: 0.8rem;
+      font-size: 0.72rem;
       font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--muted);
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.6rem;
     }
 
     .context-footer ul {
       list-style: none;
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 0.4rem;
-      font-size: 0.8rem;
+      gap: 0.3rem;
+      font-size: 0.75rem;
       color: var(--muted);
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 550px) {
       .context-footer ul { grid-template-columns: 1fr; }
     }
 
@@ -381,8 +443,8 @@
     }
 
     .disclaimer {
-      margin-top: 1.5rem;
-      font-size: 0.72rem;
+      margin-top: 1rem;
+      font-size: 0.68rem;
       color: var(--muted);
       text-align: center;
       opacity: 0.7;
@@ -393,246 +455,411 @@
   <div class="container">
     <header>
       <h1>Monetary Policy "Tax" Calculator</h1>
-      <p class="tagline">Understand the real impact of interest rate changes on your finances.</p>
+      <p class="tagline">Who bears the real cost of interest rate changes?</p>
     </header>
 
     <div class="intro-box">
-      <strong>The Reserve Bank's Official Cash Rate (OCR)</strong> influences mortgage rates, savings returns, and asset prices. While seemingly neutral, these changes can act as a regressive "tax" on some, and a subsidy for others. Use this calculator to see your personal impact.
+      <strong>The Reserve Bank's Official Cash Rate (OCR)</strong> doesn't affect everyone equally. Low-income earners are protected by the social contract. High-income earners can shift investments to benefit either way. It's the <strong>moderate income middle</strong> — too rich for support, too constrained by debt — that bears the heaviest burden.
     </div>
 
-    <div class="grid">
-      <div class="card">
-        <label for="gross-income">Gross Annual Income</label>
-        <input type="number" id="gross-income" value="95000">
-      </div>
-      <div class="card">
-        <label for="mortgage-status">Mortgage/Housing Status</label>
-        <select id="mortgage-status">
-          <option value="renting">Renting</option>
-          <option value="mortgage">Mortgage</option>
-          <option value="outright">Own Outright</option>
-          <option value="planning">Planning to Buy</option>
-        </select>
-      </div>
-      <div class="card">
-        <label for="age-range">Age Range</label>
-        <select id="age-range">
-          <option value="20-40">20-40</option>
-          <option value="40-60">40-60</option>
-          <option value="60+">60+</option>
-        </select>
-      </div>
-      <div class="card">
-        <label for="saver-spender">Financial Tendency</label>
-        <select id="saver-spender">
-          <option value="spender">Spender</option>
-          <option value="saver">Saver</option>
-        </select>
-      </div>
-      <div class="card full-width">
-        <label>Interest Rate Change</label>
-        <div class="range-display">
-          <span class="current-ocr">Current OCR: 5.5%</span>
-          <span class="rate-value" id="rate-value">0.0%</span>
-        </div>
-        <div class="range-wrap">
-          <input type="range" id="rate-slider" min="-3" max="3" value="0" step="0.1">
-          <div class="range-labels">
-            <span>-3% (Rate Cuts)</span>
-            <span>+3% (Rate Hikes)</span>
-          </div>
-        </div>
+    <!-- Income Band Selector -->
+    <div class="band-selector">
+      <label>Select Your Income Band</label>
+      <div class="band-options">
+        <button class="band-btn" data-band="very-low">
+          Very Low
+          <span class="band-range">$0–30k</span>
+        </button>
+        <button class="band-btn" data-band="low">
+          Low
+          <span class="band-range">$30k–55k</span>
+        </button>
+        <button class="band-btn active" data-band="moderate">
+          Moderate
+          <span class="band-range">$55k–100k</span>
+        </button>
+        <button class="band-btn" data-band="high">
+          High
+          <span class="band-range">$100k–180k</span>
+        </button>
+        <button class="band-btn" data-band="very-high">
+          Very High
+          <span class="band-range">$180k+</span>
+        </button>
       </div>
     </div>
 
-    <div class="results">
-      <div class="result-card bad">
+    <!-- Rate Direction Toggle -->
+    <div class="rate-toggle">
+      <button class="active" data-direction="both">Both Directions</button>
+      <button data-direction="hike">Rate Hikes ↑</button>
+      <button data-direction="cut">Rate Cuts ↓</button>
+    </div>
+
+    <!-- Results Grid -->
+    <div class="results-grid">
+      <div class="result-card hike">
         <div class="result-label">Rate Hike Impact</div>
-        <div class="result-value negative" id="hike-impact">-$0</div>
-        <div class="result-sub">Estimated monthly change</div>
-        <div class="result-detail" id="hike-detail">Higher mortgage payments or rental costs.</div>
+        <div class="result-value bad" id="hike-value">–0.8%</div>
+        <div class="result-note" id="hike-note">of annual income</div>
       </div>
-      <div class="result-card bad2">
+      <div class="result-card cut">
         <div class="result-label">Rate Cut Impact</div>
-        <div class="result-value positive" id="cut-impact">+$0</div>
-        <div class="result-sub">Estimated monthly change</div>
-        <div class="result-detail" id="cut-detail">Increased housing entry cost or essential subscription costs.</div>
+        <div class="result-value bad" id="cut-value">–1.3%</div>
+        <div class="result-note" id="cut-note">of annual income</div>
       </div>
     </div>
 
-    <div class="tax-summary">
-      <div class="tax-label">Your Effective Monetary Policy Tax / Subsidy</div>
-      <div class="tax-amount" id="net-impact">$0</div>
-      <div class="tax-sub" id="net-impact-percent">0% of annual income</div>
+    <!-- U-Curve Chart -->
+    <div class="curve-section">
+      <div class="curve-title">The U-Shaped Exposure Curve</div>
+      <div class="curve-chart" id="curve-chart">
+        <!-- bars injected by JS -->
+      </div>
+      <div class="curve-legend">
+        <span class="hike-legend">Rate Hike Impact</span>
+        <span class="cut-legend">Rate Cut Impact</span>
+      </div>
     </div>
 
-    <div class="chart-section">
-      <h3 class="chart-title">Impact Breakdown</h3>
-      <div class="bar-chart">
-        <div class="bar-group">
-          <div class="bars">
-            <div class="bar asset" style="height: 0%;" id="bar-asset-hike"></div>
-            <div class="bar debt" style="height: 0%;" id="bar-debt-hike"></div>
-          </div>
-          <div class="bar-label">Rate Hike Scenario</div>
-        </div>
-        <div class="bar-group">
-          <div class="bars">
-            <div class="bar asset" style="height: 0%;" id="bar-asset-cut"></div>
-            <div class="bar debt" style="height: 0%;" id="bar-debt-cut"></div>
-          </div>
-          <div class="bar-label">Rate Cut Scenario</div>
-        </div>
+    <!-- Exposure Breakdown for Selected Band -->
+    <div class="exposure-section">
+      <div class="exposure-title">Why You Are Exposed This Way</div>
+      <div class="exposure-factors" id="exposure-factors">
+        <!-- injected by JS -->
       </div>
+    </div>
+
+    <!-- Narrative -->
+    <div class="narrative-box">
+      <h3>Your Position in the Curve</h3>
+      <p id="narrative">Moderate-income earners sit in the most exposed position. Too "wealthy" to receive meaningful government support, but carrying enough debt — or paying enough rent — to feel every OCR move. When rates rise, your mortgage or rent costs climb. When rates fall, housing prices inflate, raising your long-term housing costs.</p>
     </div>
 
     <div class="context-footer">
-      <h3>Key Economic Context (NZ)</h3>
+      <h3>Economic Context (NZ)</h3>
       <ul>
         <li>Current OCR: ~5.5%</li>
-        <li>100bp cut → 15-20% house price rise (12-18m)</li>
+        <li>100bp cut → 15–20% house price rise (12–18 months)</li>
         <li>Auckland median house: $1.2M (2023)</li>
         <li>Median household income: $95k</li>
-        <li>$140k income needed to service $1.2M mortgage @ 2.5%</li>
+        <li>$140k income needed to service $1.2M @ 2.5%</li>
+        <li>Social support phases out above ~$55k</li>
       </ul>
-      <p class="disclaimer">This calculator provides estimates for illustrative purposes only and is not financial advice. Economic impacts are complex and can vary significantly based on individual circumstances and market conditions.</p>
+      <p class="disclaimer">Estimates for illustrative purposes. Individual circumstances vary. Not financial advice.</p>
     </div>
   </div>
 
   <script>
-    // Basic calculator logic - will be filled out by sub-agent
-    const incomeInput = document.getElementById('gross-income');
-    const mortgageStatus = document.getElementById('mortgage-status');
-    const ageRange = document.getElementById('age-range');
-    const saverSpender = document.getElementById('saver-spender');
-    const rateSlider = document.getElementById('rate-slider');
-    const rateValue = document.getElementById('rate-value');
-    const hikeImpact = document.getElementById('hike-impact');
-    const cutImpact = document.getElementById('cut-impact');
-    const netImpact = document.getElementById('net-impact');
-    const netImpactPercent = document.getElementById('net-impact-percent');
-    const hikeDetail = document.getElementById('hike-detail');
-    const cutDetail = document.getElementById('cut-detail');
-    const barAssetHike = document.getElementById('bar-asset-hike');
-    const barDebtHike = document.getElementById('bar-debt-hike');
-    const barAssetCut = document.getElementById('bar-asset-cut');
-    const barDebtCut = document.getElementById('bar-debt-cut');
+    // ─── Income Band Data ────────────────────────────────────────────────────
+    const BANDS = {
+      'very-low': { label: 'Very Low', midIncome: 20000, range: '$0–30k' },
+      'low':      { label: 'Low',      midIncome: 42500, range: '$30k–55k' },
+      'moderate': { label: 'Moderate', midIncome: 77500, range: '$55k–100k' },
+      'high':     { label: 'High',     midIncome: 140000, range: '$100k–180k' },
+      'very-high':{ label: 'Very High',midIncome: 220000, range: '$180k+' },
+    };
 
-    const baseOCR = 5.5;
+    // ─── Exposure Model ─────────────────────────────────────────────────────
+    // Returns { hike: % of income, cut: % of income } as negative (cost)
+    // Each band has:
+    //   .debtSensitivity    — how hard mortgage/rent hits on rate hikes
+    //   .imputedRentImpact  — how housing costs rise on rate cuts
+    //   .supportLevel       — 0-1, government support cushion
+    //   .investmentFlex     — 0-1, ability to benefit from either direction
+    //   .essentialSpending  — % of income spent on essentials (exposure multiplier)
+    function calculateExposure(bandKey) {
+      const b = BANDS[bandKey];
+      const income = b.midIncome;
 
-    function formatCurrency(value) {
-      return new Intl.NumberFormat('en-NZ', { style: 'currency', currency: 'NZD', signDisplay: 'always' }).format(value);
+      // Base exposure factors (empirically calibrated to thesis)
+      let debtSensitivity, imputedRentImpact, supportLevel, investmentFlex, essentialSpending;
+
+      switch (bandKey) {
+        case 'very-low':
+          // Protected by benefits, limited debt, no investment flexibility
+          debtSensitivity    = 0.15;  // 0.15% of income per 1% rate rise
+          imputedRentImpact  = 0.1;   // low — housing is often social/beneficiary
+          supportLevel       = 0.9;   // strong safety net
+          investmentFlex     = 0.0;   // no investments to reposition
+          essentialSpending  = 0.85;  // 85% of income on essentials (but subsidised)
+          break;
+
+        case 'low':
+          // Some protection, some debt, starting to lose support
+          debtSensitivity    = 0.35;
+          imputedRentImpact  = 0.4;
+          supportLevel       = 0.5;   // phasing out
+          investmentFlex     = 0.1;
+          essentialSpending  = 0.70;
+          break;
+
+        case 'moderate':
+          // Most exposed — little support, significant debt, high essentials
+          debtSensitivity    = 0.9;   // heavy mortgage/debt burden
+          imputedRentImpact  = 1.1;   // high imputed rent (rent or mortgage)
+          supportLevel       = 0.1;   // means-tested support mostly gone
+          investmentFlex     = 0.2;   // some savings but limited flexibility
+          essentialSpending  = 0.55;  // still high (rent, food, transport)
+          break;
+
+        case 'high':
+          // Lower relative exposure — lower essentials %, investment flexibility
+          debtSensitivity    = 0.4;
+          imputedRentImpact  = 0.5;
+          supportLevel       = 0.0;
+          investmentFlex     = 0.7;   // can shift investments
+          essentialSpending  = 0.35;
+          break;
+
+        case 'very-high':
+          // Minimal exposure — low essentials %, high flexibility
+          debtSensitivity    = 0.15;
+          imputedRentImpact  = 0.2;
+          supportLevel       = 0.0;
+          investmentFlex     = 1.0;   // can profit from either direction
+          essentialSpending  = 0.15;
+          break;
+      }
+
+      // Calculate effective "tax" rates for 1% OCR change
+      // Rate hike: costs via debt servicing, reduced support (for low band), income effect
+      // Rate cut: costs via imputed rent / housing price inflation
+
+      // Hike impact (% of income) — negative means cost
+      const hikeDebt = debtSensitivity * 0.4;              // direct debt servicing cost
+      const hikeSupport = supportLevel * 0.2;             // benefit system strain
+      const hikeIncome = essentialSpending * 0.15;        // indirect (pass-through inflation)
+      const hikeBenefit = investmentFlex * 0.3;           // some benefit from higher rates (savers)
+      const hikeTotal = hikeDebt + hikeSupport + hikeIncome - hikeBenefit;
+
+      // Cut impact (% of income) — negative means cost
+      const cutImputedRent = imputedRentImpact * 0.5;     // housing price inflation
+      const cutEssential = essentialSpending * 0.2;       // cost of essentials rises with property market
+      const cutInvestmentBenefit = investmentFlex * 0.25; // can benefit from rising assets
+      const cutTotal = cutImputedRent + cutEssential - cutInvestmentBenefit;
+
+      return {
+        hike: -Math.abs(hikeTotal),
+        cut:  -Math.abs(cutTotal),
+        debtSensitivity,
+        imputedRentImpact,
+        supportLevel,
+        investmentFlex,
+        essentialSpending,
+      };
     }
 
-    function updateCalculator() {
-      const income = parseFloat(incomeInput.value);
-      const rateChange = parseFloat(rateSlider.value);
-      const currentRate = baseOCR + rateChange;
-      const status = mortgageStatus.value;
-      const age = ageRange.value;
-      const tendency = saverSpender.value;
+    // ─── Exposure Factor Descriptions ─────────────────────────────────────
+    const EXPOSURE_FACTORS = {
+      debtSensitivity: {
+        icon: '🏦',
+        title: 'Debt Servicing',
+        desc: 'Mortgage or loan payments as a share of income. High debt = more exposed to rate hikes.',
+        bandDesc: {
+          'very-low': 'Minimal debt. Often benefit tenants or social housing.',
+          'low': 'Some debt, but supported by accommodation supplement.',
+          'moderate': 'Heavy mortgage or rental burden. High sensitivity.',
+          'high': 'Likely has mortgage, but income buffers the impact.',
+          'very-high': 'Investment properties can offset each other.',
+        },
+      },
+      imputedRentImpact: {
+        icon: '🏠',
+        title: 'Housing Cost Risk',
+        desc: 'Rate cuts inflate house prices, raising the imputed cost of housing — even for owners.',
+        bandDesc: {
+          'very-low': 'Often in social/beneficiary housing. Limited market exposure.',
+          'low': 'Some support, but rising rents increasingly squeeze.',
+          'moderate': 'High imputed rent. Either paying rising rents or locked out of ownership.',
+          'high': 'Already on the property ladder. Asset inflation benefits net worth.',
+          'very-high': 'Property holdings likely exceed residence. Gains from inflation.',
+        },
+      },
+      supportLevel: {
+        icon: '🛡️',
+        title: 'Social Safety Net',
+        desc: 'Government support cushions some groups from rate impacts.',
+        bandDesc: {
+          'very-low': 'Strong protection. Benefits and housing support.',
+          'low': 'Support phasing out. Growing exposure.',
+          'moderate': 'Minimal means-tested support. Fully exposed.',
+          'high': 'No government support. Fully exposed, but income helps.',
+          'very-high': 'No government support. Income fully insulates.',
+        },
+      },
+      investmentFlex: {
+        icon: '📊',
+        title: 'Investment Flexibility',
+        desc: 'Ability to reposition savings and investments to benefit from either rate direction.',
+        bandDesc: {
+          'very-low': 'No investments to reposition.',
+          'low': 'Limited savings. No meaningful flexibility.',
+          'moderate': 'Some savings, but limited ability to hedge.',
+          'high': 'Can hold bonds (rate hikes) or equities/property (rate cuts).',
+          'very-high': 'Full flexibility. Can profit from either direction.',
+        },
+      },
+    };
 
-      rateValue.textContent = (rateChange > 0 ? '+' : '') + rateChange.toFixed(1) + '%';
+    // ─── Narrative Text ────────────────────────────────────────────────────
+    const NARRATIVES = {
+      'very-low': 'Very low income earners are relatively insulated from OCR changes. The social contract — benefits, accommodation supplement, and community services — provides a cushion. When rates rise, your benefits often adjust upward. When rates fall, you may be less affected by housing inflation if you\'re in social housing or benefit-supported rental.',
+      'low': 'Low income earners are partially protected but increasingly exposed as support phases out. Some debt (consumer, car loans) is sensitive to rate hikes, and rising rents increasingly squeeze. The safety net is there but full of holes at this income level.',
+      'moderate': 'Moderate-income earners sit in the most exposed position. Too "wealthy" to receive meaningful government support, yet carrying enough debt — or paying enough rent — to feel every OCR move. When rates rise, your mortgage or rent costs climb. When rates fall, housing prices inflate, raising your long-term housing costs and essential expenses tied to the property market.',
+      'high': 'High income earners have significant investment flexibility and lower essential spending as a share of income. While still exposed to mortgage costs, the ability to shift investments (bonds benefit from rate hikes, equities and property from rate cuts) means you can partially hedge in either direction.',
+      'very-high': 'Very high income earners are the least exposed to OCR changes. Essentials are a small fraction of spending, investment flexibility is maximal, and any debt costs are easily managed. Rate hikes benefit your bond holdings; rate cuts inflate your asset values. You win either way.',
+    };
 
-      // --- Calculations (Simplified for initial version) ---
-      let hike = 0;
-      let cut = 0;
-      let hikeDetailText = '';
-      let cutDetailText = '';
+    // ─── UI State ─────────────────────────────────────────────────────────
+    let selectedBand = 'moderate';
+    let selectedDirection = 'both';
 
-      // Mortgage Impact
-      if (status === 'mortgage') {
-        // Crude estimate: 1% rate change ~ $100/month per $100k mortgage
-        const mortgageAmount = 800000; // Example: 80% of $1M house
-        const monthlyImpact = (rateChange * 100 * (mortgageAmount / 100000)) / 12;
-        hike = monthlyImpact; // Assume positive rateChange is a hike
-        cut = -monthlyImpact; // Assume negative rateChange is a cut
+    // ─── Render U-Curve Chart ──────────────────────────────────────────────
+    function renderCurveChart() {
+      const container = document.getElementById('curve-chart');
+      container.innerHTML = '';
 
-        hikeDetailText = `Estimated change in monthly mortgage payments based on a $${mortgageAmount.toLocaleString()} mortgage.`;
-        cutDetailText = `Estimated change in monthly mortgage payments based on a $${mortgageAmount.toLocaleString()} mortgage.`;
+      const bandOrder = ['very-low', 'low', 'moderate', 'high', 'very-high'];
 
-      } else if (status === 'renting') {
-        // Renting impact - rough proxy for overall economic changes
-        hike = income * 0.0005 * rateChange; // 0.05% of income per 1% rate change
-        cut = -income * 0.0005 * rateChange;
+      bandOrder.forEach(bandKey => {
+        const exposure = calculateExposure(bandKey);
+        const b = BANDS[bandKey];
 
-        hikeDetailText = 'Increased cost of living due to broader economic shifts.';
-        cutDetailText = 'Decreased cost of living due to broader economic shifts.';
+        const isSelected = bandKey === selectedBand;
+        const showHike = selectedDirection === 'both' || selectedDirection === 'hike';
+        const showCut = selectedDirection === 'both' || selectedDirection === 'cut';
 
-      } else if (status === 'planning') {
-        // Planning to buy - focus on housing entry cost
-        const housePriceImpact = 1.2 * rateChange * 10000; // $10k per 1% on $1M house
-        cut = -housePriceImpact / 12; // Rate cuts make houses more expensive (negative impact)
-        hike = housePriceImpact / 12; // Rate hikes make houses cheaper (positive impact)
+        const hikePct = Math.abs(exposure.hike);
+        const cutPct = Math.abs(exposure.cut);
+        const maxPct = 2.0; // scale reference
 
-        hikeDetailText = 'Potential reduction in housing entry cost.';
-        cutDetailText = 'Potential increase in housing entry cost due to asset inflation.';
-      }
+        const barWrap = document.createElement('div');
+        barWrap.className = 'curve-bar-wrap';
 
-      // Spender/Saver (simplified)
-      if (tendency === 'saver') {
-        hike += income * 0.001 * rateChange; // Savers benefit from hikes
-        cut += income * 0.001 * -rateChange; // Savers lose from cuts
-      } else if (tendency === 'spender') {
-        hike -= income * 0.0005 * rateChange; // Spenders hurt by hikes (credit costs)
-        cut -= income * 0.0005 * -rateChange; // Spenders benefit from cuts (cheaper credit)
-      }
+        const barContainer = document.createElement('div');
+        barContainer.className = 'curve-bar-container';
 
-      // Age Range - simplified impact
-      if (age === '20-40') {
-        // Younger people more sensitive to housing entry cost (cuts bad, hikes good)
-        cut -= income * 0.001 * -rateChange;
-        hike += income * 0.001 * rateChange;
-      } else if (age === '60+') {
-        // Older people more sensitive to savings rates (hikes good, cuts bad)
-        hike += income * 0.001 * rateChange;
-        cut -= income * 0.001 * -rateChange;
-      }
+        if (showHike) {
+          const hikeBar = document.createElement('div');
+          hikeBar.className = 'curve-bar hike-bar' + (isSelected ? ' highlight' : '');
+          hikeBar.style.height = Math.min(100, (hikePct / maxPct) * 100) + '%';
+          hikeBar.title = `Rate hike: ${exposure.hike.toFixed(1)}%`;
+          barContainer.appendChild(hikeBar);
+        }
 
-      // Overall impact
-      const netMonthlyImpact = hike + cut;
-      const netAnnualImpact = netMonthlyImpact * 12;
-      const netImpactPercentValue = (netAnnualImpact / income) * 100;
+        if (showCut) {
+          const cutBar = document.createElement('div');
+          cutBar.className = 'curve-bar cut-bar' + (isSelected ? ' highlight' : '');
+          cutBar.style.height = Math.min(100, (cutPct / maxPct) * 100) + '%';
+          cutBar.title = `Rate cut: ${exposure.cut.toFixed(1)}%`;
+          barContainer.appendChild(cutBar);
+        }
 
-      hikeImpact.textContent = formatCurrency(hike);
-      hikeImpact.className = 'result-value ' + (hike < 0 ? 'negative' : 'positive');
-      hikeDetail.textContent = hikeDetailText || 'Higher debt servicing costs.';
+        const label = document.createElement('div');
+        label.className = 'curve-bar-label';
+        label.innerHTML = `<strong>${b.label}</strong>${b.range}`;
 
-      cutImpact.textContent = formatCurrency(cut);
-      cutImpact.className = 'result-value ' + (cut < 0 ? 'negative' : 'positive');
-      cutDetail.textContent = cutDetailText || 'Increased asset prices or cost of essentials.';
-
-      netImpact.textContent = formatCurrency(netAnnualImpact);
-      netImpact.className = 'tax-amount ' + (netAnnualImpact < 0 ? 'negative' : 'positive');
-      netImpactPercent.textContent = (netImpactPercentValue > 0 ? '+' : '') + netImpactPercentValue.toFixed(2) + '% of annual income';
-
-      // Chart updates
-      const maxBarHeight = 100; // max % height
-      const assetHikeValue = (status === 'planning' ? hike : 0) * (rateChange < 0 ? 0 : 1); // rough asset inflation on hike
-      const debtHikeValue = (status === 'mortgage' ? hike : 0) * (rateChange > 0 ? 1 : 0); // rough debt cost on hike
-      const assetCutValue = (status === 'planning' ? cut : 0) * (rateChange > 0 ? 0 : 1); // rough asset inflation on cut
-      const debtCutValue = (status === 'mortgage' ? cut : 0) * (rateChange < 0 ? 1 : 0); // rough debt cost on cut
-
-      const totalHikeImpact = Math.abs(hike);
-      const totalCutImpact = Math.abs(cut);
-
-      barAssetHike.style.height = `${Math.min(maxBarHeight, Math.abs(assetHikeValue / totalHikeImpact) * 100 || 0)}%`;
-      barDebtHike.style.height = `${Math.min(maxBarHeight, Math.abs(debtHikeValue / totalHikeImpact) * 100 || 0)}%`;
-      barAssetCut.style.height = `${Math.min(maxBarHeight, Math.abs(assetCutValue / totalCutImpact) * 100 || 0)}%`;
-      barDebtCut.style.height = `${Math.min(maxBarHeight, Math.abs(debtCutValue / totalCutImpact) * 100 || 0)}%`;
-
-      // Update bar labels with values (optional)
+        barWrap.appendChild(barContainer);
+        barWrap.appendChild(label);
+        container.appendChild(barWrap);
+      });
     }
 
-    // Event Listeners
-    incomeInput.addEventListener('input', updateCalculator);
-    mortgageStatus.addEventListener('change', updateCalculator);
-    ageRange.addEventListener('change', updateCalculator);
-    saverSpender.addEventListener('change', updateCalculator);
-    rateSlider.addEventListener('input', updateCalculator);
+    // ─── Render Results ────────────────────────────────────────────────────
+    function renderResults() {
+      const exposure = calculateExposure(selectedBand);
+      const hikeEl = document.getElementById('hike-value');
+      const cutEl = document.getElementById('cut-value');
+      const hikeNote = document.getElementById('hike-note');
+      const cutNote = document.getElementById('cut-note');
 
-    // Initial calculation
-    updateCalculator();
+      const showHike = selectedDirection === 'both' || selectedDirection === 'hike';
+      const showCut = selectedDirection === 'both' || selectedDirection === 'cut';
+
+      if (showHike) {
+        hikeEl.textContent = (exposure.hike >= 0 ? '+' : '') + exposure.hike.toFixed(1) + '%';
+        hikeEl.className = 'result-value ' + (exposure.hike < 0 ? 'bad' : 'good');
+        hikeNote.textContent = 'of annual income (cost)';
+        hikeEl.parentElement.style.display = '';
+      } else {
+        hikeEl.parentElement.style.display = 'none';
+      }
+
+      if (showCut) {
+        cutEl.textContent = (exposure.cut >= 0 ? '+' : '') + exposure.cut.toFixed(1) + '%';
+        cutEl.className = 'result-value ' + (exposure.cut < 0 ? 'bad' : 'good');
+        cutNote.textContent = 'of annual income (cost)';
+        cutEl.parentElement.style.display = '';
+      } else {
+        cutEl.parentElement.style.display = 'none';
+      }
+    }
+
+    // ─── Render Exposure Factors ───────────────────────────────────────────
+    function renderExposureFactors() {
+      const exposure = calculateExposure(selectedBand);
+      const container = document.getElementById('exposure-factors');
+      container.innerHTML = '';
+
+      const factors = ['debtSensitivity', 'imputedRentImpact', 'supportLevel', 'investmentFlex'];
+
+      factors.forEach(key => {
+        const factor = EXPOSURE_FACTORS[key];
+        const value = exposure[key];
+        const level = value >= 0.6 ? 'high' : value >= 0.3 ? 'medium' : 'low';
+        const pct = Math.round(value * 100);
+
+        const el = document.createElement('div');
+        el.className = 'exposure-factor';
+        el.innerHTML = `
+          <div class="exposure-icon">${factor.icon}</div>
+          <div>
+            <h4>${factor.title}</h4>
+            <p>${factor.bandDesc[selectedBand]}</p>
+            <div class="exposure-bar-wrap">
+              <div class="exposure-bar ${level}" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+        container.appendChild(el);
+      });
+    }
+
+    // ─── Render Narrative ──────────────────────────────────────────────────
+    function renderNarrative() {
+      document.getElementById('narrative').textContent = NARRATIVES[selectedBand];
+    }
+
+    // ─── Update Everything ────────────────────────────────────────────────
+    function update() {
+      renderCurveChart();
+      renderResults();
+      renderExposureFactors();
+      renderNarrative();
+    }
+
+    // ─── Event Listeners ───────────────────────────────────────────────────
+    document.querySelectorAll('.band-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.band-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedBand = btn.dataset.band;
+        update();
+      });
+    });
+
+    document.querySelectorAll('.rate-toggle button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.rate-toggle button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedDirection = btn.dataset.direction;
+        update();
+      });
+    });
+
+    // ─── Init ──────────────────────────────────────────────────────────────
+    update();
   </script>
 </body>
 </html>
