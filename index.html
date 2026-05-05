@@ -263,6 +263,7 @@
     }
 
     .result-value.bad { color: var(--red); }
+    .result-value.neutral { color: var(--muted); }
     .result-value.good { color: var(--green); }
     .result-value.neutral { color: var(--yellow); }
 
@@ -547,10 +548,10 @@
 
     <!-- OCR Basis Points Slider -->
     <div class="bp-slider">
-      <label>OCR Change <span id="bp-label">100bp</span></label>
-      <input type="range" id="bp-slider" min="25" max="300" step="25" value="100">
+      <label>OCR Change <span id="bp-label">0bp (status quo)</span></label>
+      <input type="range" id="bp-slider" min="0" max="300" step="25" value="0">
       <div class="bp-ticks">
-        <span>25</span><span>50</span><span>75</span><span>100</span><span>150</span><span>200</span><span>250</span><span>300</span>
+        <span>0</span><span>50</span><span>100</span><span>150</span><span>200</span><span>250</span><span>300</span>
       </div>
     </div>
 
@@ -814,7 +815,7 @@
     };
 
     // ─── UI State ─────────────────────────────────────────────────────────
-    REPLACED
+    let selectedBand = 'moderate';
     let selectedDirection = 'both';
 
     // ─── Render U-Curve Chart ──────────────────────────────────────────────
@@ -881,8 +882,8 @@
 
       if (showHike) {
         hikeEl.textContent = (exposure.hike >= 0 ? '+' : '') + exposure.hike.toFixed(1) + '%';
-        hikeEl.className = 'result-value ' + (exposure.hike < 0 ? 'bad' : 'good');
-        hikeNote.textContent = 'of annual income (cost)';
+        hikeEl.className = 'result-value ' + (exposure.hike <= 0 ? (exposure.hike < 0 ? 'bad' : 'neutral') : 'good');
+        hikeNote.textContent = basisPoints === 0 ? 'of annual income (at status quo)':'of annual income (cost)';
         hikeEl.parentElement.style.display = '';
         const hikeDollarEl = document.getElementById('hike-dollar');
         const hikeDollar = Math.abs(exposure.hike / 100 * b.midIncome);
@@ -893,8 +894,8 @@
 
       if (showCut) {
         cutEl.textContent = (exposure.cut >= 0 ? '+' : '') + exposure.cut.toFixed(1) + '%';
-        cutEl.className = 'result-value ' + (exposure.cut < 0 ? 'bad' : 'good');
-        cutNote.textContent = 'of annual income (cost)';
+        cutEl.className = 'result-value ' + (exposure.cut <= 0 ? (exposure.cut < 0 ? 'bad' : 'neutral') : 'good');
+        cutNote.textContent = basisPoints === 0 ? 'of annual income (at status quo)':'of annual income (cost)';
         cutEl.parentElement.style.display = '';
         const cutDollarEl = document.getElementById('cut-dollar');
         const cutDollar = Math.abs(exposure.cut / 100 * b.midIncome);
@@ -906,247 +907,7 @@
 
     // ─── Render Exposure Factors ───────────────────────────────────────────
     function renderExposureFactors() {
-      const exposure = calculateExposure(selectedBand);
-      const container = document.getElementById('exposure-factors');
-      container.innerHTML = '';
-
-      const factors = ['debtSensitivity', 'imputedRentImpact', 'supportLevel', 'investmentFlex', 'marketConcentration'];
-
-      factors.forEach(key => {
-        const factor = EXPOSURE_FACTORS[key];
-        const value = exposure[key];
-        const level = value >= 0.6 ? 'high' : value >= 0.3 ? 'medium' : 'low';
-        const pct = Math.round(value * 100);
-
-        const el = document.createElement('div');
-        el.className = 'exposure-factor';
-        el.innerHTML = `
-          <div class="exposure-icon">${factor.icon}</div>
-          <div>
-            <h4>${factor.title}</h4>
-            <p>${factor.bandDesc[selectedBand]}</p>
-            <div class="exposure-bar-wrap">
-              <div class="exposure-bar ${level}" style="width: ${pct}%"></div>
-            </div>
-          </div>
-        `;
-        container.appendChild(el);
-      });
-    }
-
-    // ─── Render Narrative ──────────────────────────────────────────────────
-    function renderNarrative() {
-      document.getElementById('narrative').textContent = NARRATIVES[selectedBand];
-    }
-
-    // ─── Update Everything ────────────────────────────────────────────────
-    function update() {
-      renderCurveChart(basisPoints);
-      renderResults();
-      renderExposureFactors();
-      renderNarrative();
-    }
-
-    // ─── Event Listeners ───────────────────────────────────────────────────
-    document.querySelectorAll('.band-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.band-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedBand = btn.dataset.band;
-        update();
-      });
-    });
-
-    document.querySelectorAll('.rate-toggle button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.rate-toggle button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedDirection = btn.dataset.direction;
-        update();
-      });
-    });
-
-    // ─── Init ──────────────────────────────────────────────────────────────
-    update();
-  </script>
-</body>
-</html>
- + hikeDollar.toLocaleString() + '/yr';
-      } else {
-        hikeEl.parentElement.style.display = 'none';
-        document.getElementById('hike-dollar').style.display = 'none';
-      }
-
-      if (showCut) {
-        cutEl.textContent = (exposure.cut >= 0 ? '+' : '') + exposure.cut.toFixed(1) + '%';
-        cutEl.className = 'result-value ' + (exposure.cut < 0 ? 'bad' : 'good');
-        cutNote.textContent = 'of annual income (cost)';
-        cutEl.parentElement.style.display = '';
-      } else {
-        cutEl.parentElement.style.display = 'none';
-      }
-    }
-
-    // ─── Render Exposure Factors ───────────────────────────────────────────
-    function renderExposureFactors() {
-      const exposure = calculateExposure(selectedBand);
-      const container = document.getElementById('exposure-factors');
-      container.innerHTML = '';
-
-      const factors = ['debtSensitivity', 'imputedRentImpact', 'supportLevel', 'investmentFlex', 'marketConcentration'];
-
-      factors.forEach(key => {
-        const factor = EXPOSURE_FACTORS[key];
-        const value = exposure[key];
-        const level = value >= 0.6 ? 'high' : value >= 0.3 ? 'medium' : 'low';
-        const pct = Math.round(value * 100);
-
-        const el = document.createElement('div');
-        el.className = 'exposure-factor';
-        el.innerHTML = `
-          <div class="exposure-icon">${factor.icon}</div>
-          <div>
-            <h4>${factor.title}</h4>
-            <p>${factor.bandDesc[selectedBand]}</p>
-            <div class="exposure-bar-wrap">
-              <div class="exposure-bar ${level}" style="width: ${pct}%"></div>
-            </div>
-          </div>
-        `;
-        container.appendChild(el);
-      });
-    }
-
-    // ─── Render Narrative ──────────────────────────────────────────────────
-    function renderNarrative() {
-      document.getElementById('narrative').textContent = NARRATIVES[selectedBand];
-    }
-
-    // ─── Update Everything ────────────────────────────────────────────────
-    function update() {
-      renderCurveChart(basisPoints);
-      renderResults();
-      renderExposureFactors();
-      renderNarrative();
-    }
-
-    // ─── Event Listeners ───────────────────────────────────────────────────
-    document.querySelectorAll('.band-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.band-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedBand = btn.dataset.band;
-        update();
-      });
-    });
-
-    document.querySelectorAll('.rate-toggle button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.rate-toggle button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedDirection = btn.dataset.direction;
-        update();
-      });
-    });
-
-    // ─── Init ──────────────────────────────────────────────────────────────
-    update();
-  </script>
-</body>
-</html>
- + cutDollar.toLocaleString() + '/yr';
-      } else {
-        cutEl.parentElement.style.display = 'none';
-        document.getElementById('cut-dollar').style.display = 'none';
-      }
-    }
-
-    // ─── Render Exposure Factors ───────────────────────────────────────────
-    function renderExposureFactors() {
-      const exposure = calculateExposure(selectedBand);
-      const container = document.getElementById('exposure-factors');
-      container.innerHTML = '';
-
-      const factors = ['debtSensitivity', 'imputedRentImpact', 'supportLevel', 'investmentFlex', 'marketConcentration'];
-
-      factors.forEach(key => {
-        const factor = EXPOSURE_FACTORS[key];
-        const value = exposure[key];
-        const level = value >= 0.6 ? 'high' : value >= 0.3 ? 'medium' : 'low';
-        const pct = Math.round(value * 100);
-
-        const el = document.createElement('div');
-        el.className = 'exposure-factor';
-        el.innerHTML = `
-          <div class="exposure-icon">${factor.icon}</div>
-          <div>
-            <h4>${factor.title}</h4>
-            <p>${factor.bandDesc[selectedBand]}</p>
-            <div class="exposure-bar-wrap">
-              <div class="exposure-bar ${level}" style="width: ${pct}%"></div>
-            </div>
-          </div>
-        `;
-        container.appendChild(el);
-      });
-    }
-
-    // ─── Render Narrative ──────────────────────────────────────────────────
-    function renderNarrative() {
-      document.getElementById('narrative').textContent = NARRATIVES[selectedBand];
-    }
-
-    // ─── Update Everything ────────────────────────────────────────────────
-    function update() {
-      renderCurveChart(basisPoints);
-      renderResults();
-      renderExposureFactors();
-      renderNarrative();
-    }
-
-    // ─── Event Listeners ───────────────────────────────────────────────────
-    document.querySelectorAll('.band-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.band-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedBand = btn.dataset.band;
-        update();
-      });
-    });
-
-    document.querySelectorAll('.rate-toggle button').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.rate-toggle button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedDirection = btn.dataset.direction;
-        update();
-      });
-    });
-
-    // ─── Init ──────────────────────────────────────────────────────────────
-    update();
-  </script>
-</body>
-</html>
- + hikeDollar.toLocaleString() + '/yr';
-      } else {
-        hikeEl.parentElement.style.display = 'none';
-        document.getElementById('hike-dollar').style.display = 'none';
-      }
-
-      if (showCut) {
-        cutEl.textContent = (exposure.cut >= 0 ? '+' : '') + exposure.cut.toFixed(1) + '%';
-        cutEl.className = 'result-value ' + (exposure.cut < 0 ? 'bad' : 'good');
-        cutNote.textContent = 'of annual income (cost)';
-        cutEl.parentElement.style.display = '';
-      } else {
-        cutEl.parentElement.style.display = 'none';
-      }
-    }
-
-    // ─── Render Exposure Factors ───────────────────────────────────────────
-    function renderExposureFactors() {
-      const exposure = calculateExposure(selectedBand);
+      const exposure = calculateExposure(selectedBand, basisPoints);
       const container = document.getElementById('exposure-factors');
       container.innerHTML = '';
 
