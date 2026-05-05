@@ -655,16 +655,17 @@
       const hikeSupport = b.supportLevel * 0.15;       // support system partially absorbs
       const hikeTotal = housingHike + debtHike + marketConcHike - hikeBenefit - hikeSupport;
 
-      // Cut impact: OCR falls → housing prices ↑ (imputed rent ↑), market conc ↑, but assets benefit
-      // The OCR "tax" on rate cuts = imputed rent inflation + market concentration rigidity - asset gains
+      // Cut impact: OCR falls → housing prices ↑ (imputed rent ↑), market conc ↑, assets benefit
+      // Note: for very-high income, asset gains from cuts are a real benefit, not an exposure offset
+      // Net cut cost = (imputed rent + market conc) - asset gains (capped)
       const imputedRentCut = b.imputedRentImpact * 0.40;  // house price inflation on rate cuts
       const marketConcCut = b.marketConcentration * 0.20;  // oligopoly absorbs cuts (prices don't fall)
-      const cutBenefit = b.investmentFlex * 0.30;         // asset values benefit from rate cuts
+      const cutBenefit = b.investmentFlex * 0.15;         // asset values benefit from rate cuts
       const cutTotal = imputedRentCut + marketConcCut - cutBenefit;
 
       return {
-        hike: -Math.abs(hikeTotal),
-        cut:  -Math.abs(cutTotal),
+        hike: -hikeTotal,
+        cut:  -cutTotal,
         essentialSpending: b.essentialSpending,
         housingWeight: b.housingWeight,
         debtSensitivity: b.debtSensitivity,
