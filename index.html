@@ -826,7 +826,7 @@
       const bandOrder = ['very-low', 'low', 'moderate', 'high', 'very-high'];
 
       bandOrder.forEach(bandKey => {
-        const exposure = calculateExposure(bandKey);
+        const exposure = calculateExposure(bandKey, bps);
         const b = BANDS[bandKey];
 
         const isSelected = bandKey === selectedBand;
