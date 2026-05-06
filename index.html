@@ -736,27 +736,34 @@
     function calculateExposure(bandKey, bps) {
       const b = BANDS[bandKey];
       const scale = (bps === undefined ? 1.0 : bps / 100);
+      const YEARS = 3;
 
-      // Hike impact: OCR rises → debt servicing costs ↑, rent ↑, market conc ↑, but savings benefit ↑
-      // The OCR "tax" on rate hikes = housing cost sensitivity + debt burden + market conc - investment offset
-      const housingHike = b.housingWeight * 0.35;     // housing (rent/debt) cost pressure on hike
-      const debtHike = b.debtSensitivity * 0.25;      // mortgage debt servicing sensitivity
-      const marketConcHike = b.marketConcentration * 0.20;  // oligopoly price rigidity
-      const hikeBenefit = b.investmentFlex * 0.30;    // savings/bonds benefit from higher rates
-      const hikeSupport = b.supportLevel * 0.15;       // support system partially absorbs
-      const hikeTotal = (housingHike + debtHike + marketConcHike - hikeBenefit - hikeSupport) * scale;
+      // Smooth cost (annual fraction of income per 100bp)
+      const rawHike = (b.housingWeight * 0.35 + b.debtSensitivity * 0.25 + b.marketConcentration * 0.20 - b.investmentFlex * 0.30 - b.supportLevel * 0.15);
+      const smoothHikeDollar = (rawHike / 100) * b.midIncome * YEARS * scale;
 
-      // Cut impact: OCR falls → housing prices ↑ (imputed rent ↑), market conc ↑, assets benefit
-      // Note: for very-high income, asset gains from cuts are a real benefit, not an exposure offset
-      // Net cut cost = (imputed rent + market conc) - asset gains (capped)
-      const imputedRentCut = b.imputedRentImpact * 0.40;  // house price inflation on rate cuts
-      const marketConcCut = b.marketConcentration * 0.20;  // oligopoly absorbs cuts (prices don't fall)
-      const cutBenefit = b.investmentFlex * 0.15;         // asset values benefit from rate cuts
-      const cutTotal = (imputedRentCut + marketConcCut - cutBenefit) * scale;
+      // Refix cliff component for hikes
+      const hikeCliff = b.loanSize * 0.01 * b.cliffFactor * scale;
+
+      // Smooth cost for cuts
+      const rawCut = (b.imputedRentImpact * 0.40 + b.marketConcentration * 0.20 - b.investmentFlex * 0.15);
+      const smoothCutDollar = (rawCut / 100) * b.midIncome * YEARS * scale;
+
+      // Refix cliff: cuts can benefit hedgers (negative = cost, positive = benefit)
+      const cutCliff = -(b.loanSize * 0.01 * b.cliffFactor * scale);
+
+      // Total 3-year impact in dollars
+      const totalHikeDollar = smoothHikeDollar + hikeCliff;
+      const totalCutDollar  = smoothCutDollar + cutCliff;
+
+      // Convert to % of 3-year income
+      const income3yr = b.midIncome * YEARS;
+      const hikePct = -totalHikeDollar / income3yr * 100;
+      const cutPct  = -totalCutDollar  / income3yr * 100;
 
       return {
-        hike: -hikeTotal,
-        cut:  -cutTotal,
+        hike: hikePct,
+        cut:  cutPct,
         essentialSpending: b.essentialSpending,
         housingWeight: b.housingWeight,
         debtSensitivity: b.debtSensitivity,
