@@ -633,6 +633,10 @@
       'very-low': {
         label: 'Very Low',
         midIncome: 20000,
+        loanSize: 0,
+        cliffFactor: 0,
+        loanSize: 0,
+        cliffFactor: 0,
         range: '$0–30k',
         quintile: 'Q1 (lowest 20%)',
         essentialSpending: 0.667,   // 66.7% of expenditure on essentials (HLPI 2024)
@@ -647,6 +651,10 @@
       'low': {
         label: 'Low',
         midIncome: 42500,
+        loanSize: 350000,
+        cliffFactor: 0.2,
+        loanSize: 350000,
+        cliffFactor: 0.2,
         range: '$30k–55k',
         quintile: 'Q2',
         essentialSpending: 0.691,   // 69.1% of expenditure — HIGHEST essential burden (HLPI 2024)
@@ -661,6 +669,10 @@
       'moderate': {
         label: 'Moderate',
         midIncome: 77500,
+        loanSize: 450000,
+        cliffFactor: 0.35,
+        loanSize: 450000,
+        cliffFactor: 0.35,
         range: '$55k–100k',
         quintile: 'Q3',
         essentialSpending: 0.632,   // 63.2% of expenditure (HLPI 2024)
@@ -675,6 +687,10 @@
       'high': {
         label: 'High',
         midIncome: 140000,
+        loanSize: 550000,
+        cliffFactor: 0.25,
+        loanSize: 550000,
+        cliffFactor: 0.25,
         range: '$100k–180k',
         quintile: 'Q4',
         essentialSpending: 0.584,   // 58.4% of expenditure (HLPI 2024)
@@ -689,6 +705,10 @@
       'very-high': {
         label: 'Very High',
         midIncome: 220000,
+        loanSize: 400000,
+        cliffFactor: 0.05,
+        loanSize: 400000,
+        cliffFactor: 0.05,
         range: '$180k+',
         quintile: 'Q5 (top 20%)',
         essentialSpending: 0.543,   // 54.3% of expenditure (HLPI 2024)
@@ -703,6 +723,12 @@
     };
 
     // ─── Exposure Model ─────────────────────────────────────────────────────
+    // Period: 3 years (captures at least one fixed-rate refix cycle, 2-3 rent resets)
+    // Cliff: the refix shock is the dominant OCR impact for mortgage holders — not captured
+    // in annual smooth cost models. We add a cliff component to each band as an estimate
+    // of the accumulated refix cost over 3 years given a sustained OCR move.
+    const YEARS = 3;
+
     // Returns { hike: % of income, cut: % of income } as negative (cost)
     // Coefficients calibrated to Stats NZ HLPI 2024 + economic logic
     // CPI methodology note: mortgage costs excluded from official inflation; OCR's impact on
@@ -889,7 +915,8 @@
         hikeEl.parentElement.style.display = '';
         const hikeDollarEl = document.getElementById('hike-dollar');
         const hikeDollar = Math.abs(exposure.hike / 100 * b.midIncome);
-        hikeDollarEl.textContent = '≈ $' + hikeDollar.toLocaleString() + '/yr';
+        const hikeDollar3yr = Math.abs(exposure.hike / 100 * b.midIncome * 3);
+        hikeDollarEl.textContent = '≈ $' + Math.round(hikeDollar3yr).toLocaleString() + '/3yr';
       } else {
         document.getElementById('hike-dollar').style.display = 'none';
       }
@@ -901,7 +928,8 @@
         cutEl.parentElement.style.display = '';
         const cutDollarEl = document.getElementById('cut-dollar');
         const cutDollar = Math.abs(exposure.cut / 100 * b.midIncome);
-        cutDollarEl.textContent = '≈ $' + cutDollar.toLocaleString() + '/yr';
+        const cutDollar3yr = Math.abs(exposure.cut / 100 * b.midIncome * 3);
+        cutDollarEl.textContent = '≈ $' + Math.round(cutDollar3yr).toLocaleString() + '/3yr';
       } else {
         document.getElementById('cut-dollar').style.display = 'none';
       }
