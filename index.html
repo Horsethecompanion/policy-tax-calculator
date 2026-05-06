@@ -709,7 +709,7 @@
     // actual household costs is therefore systematically undercounted.
     function calculateExposure(bandKey, bps) {
       const b = BANDS[bandKey];
-      const scale = (bps || 100) / 100;
+      const scale = (bps === undefined ? 1.0 : bps / 100);
 
       // Hike impact: OCR rises → debt servicing costs ↑, rent ↑, market conc ↑, but savings benefit ↑
       // The OCR "tax" on rate hikes = housing cost sensitivity + debt burden + market conc - investment offset
