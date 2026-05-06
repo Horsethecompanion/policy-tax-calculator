@@ -968,6 +968,12 @@
       });
     });
 
+    document.getElementById('bp-slider').addEventListener('input', function() {
+      basisPoints = parseInt(this.value);
+      document.getElementById('bp-label').textContent = basisPoints === 0 ? '0bp (status quo)' : basisPoints + 'bp';
+      update();
+    });
+
     // ─── Init ──────────────────────────────────────────────────────────────
     update();
   </script>
