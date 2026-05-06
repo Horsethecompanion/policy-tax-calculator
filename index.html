@@ -908,7 +908,9 @@
 
     // ─── Render Exposure Factors ───────────────────────────────────────────
     function renderExposureFactors() {
+      console.log('renderExposureFactors called.');
       const exposure = calculateExposure(selectedBand, basisPoints);
+      console.log('Exposure in renderExposureFactors:', exposure);
       const container = document.getElementById('exposure-factors');
       container.innerHTML = '';
 
@@ -943,6 +945,7 @@
 
     // ─── Update Everything ────────────────────────────────────────────────
     function update() {
+      console.log('Update called. basisPoints:', basisPoints);
       renderCurveChart(basisPoints);
       renderResults();
       renderExposureFactors();
